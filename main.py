@@ -1,27 +1,35 @@
 from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
+from dotenv import load_dotenv
+import argparse
 
-# SECURE THIS KEY!
-api_key = "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"
+load_dotenv()
 
-llm = OpenAI(
-    openai_api_key=api_key
-)
+parser = argparse.ArgumentParser()
+parser.add_argument("--task", default="return a list of numbers")
+parser.add_argument("--language", default="python")
+args = parser.parse_args()
+
+llm = OpenAI()
 
 code_prompt = PromptTemplate(
-    template="Write a very short {language} function that will {task}",
-    input_variables=["language", "task"]
+    input_variables=["task", "language"],
+    template="Write a very short {language} function that will {task}."
 )
-
 code_chain = LLMChain(
     llm=llm,
     prompt=code_prompt
 )
 
 result = code_chain({
-    "language": "python",
-    "task": "return a list of numbers"
+    "language": args.language,
+    "task": args.task
 })
 
-print(result["text"])
+print(result)
+
+
+# SECURE THIS KEY!
+
+
